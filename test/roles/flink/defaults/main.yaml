@@ -1,0 +1,5 @@
+    flink_version: "1.19.1"
+    flink_home: "/opt/flink"
+    flink_user: "flink"
+    flink_group: "flink"
+    flink_url: "https://archive.apache.org/dist/flink/flink-{{ flink_version }}/flink-{{ flink_version }}-bin-scala_2.12.tgz"

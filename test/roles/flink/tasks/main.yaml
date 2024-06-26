@@ -1,0 +1,58 @@
+---
+- name: Ensure Flink group exists
+  group:
+    name: "{{ flink_group }}"
+    state: present
+
+- name: Ensure Flink user exists
+  user:
+    name: "{{ flink_user }}"
+    group: "{{ flink_group }}"
+    createhome: no
+    shell: /bin/bash
+
+- name: Create Flink home directory
+  file:
+    path: "{{ flink_home }}"
+    state: directory
+    owner: "{{ flink_user }}"
+    group: "{{ flink_group }}"
+
+- name: Download Flink binary
+  get_url:
+    url: "{{ flink_url }}"
+    dest: "/tmp/flink-{{ flink_version }}-bin-scala_2.12.tgz"
+
+- name: Extract Flink binary
+  unarchive:
+    src: "/tmp/flink-{{ flink_version }}-bin-scala_2.12.tgz"
+    dest: "{{ flink_home }}"
+    remote_src: yes
+    owner: "{{ flink_user }}"
+    group: "{{ flink_group }}"
+
+- name: Set up symbolic link to Flink directory
+  file:
+    src: "{{ flink_home }}/flink-{{ flink_version }}"
+    dest: "{{ flink_home }}/express"
+    state: link
+
+- name: Ensure Flink user owns the Flink directory
+  file:
+    path: "{{ flink_home }}/express"
+    state: directory
+    owner: "{{ flink_user }}"
+    group: "{{ flink_group }}"
+    recurse: yes
+
+- name: Copy Flink configuration files
+  template:
+    src: flink-conf.yaml.j2
+    dest: "{{ flink_home }}/express/conf/flink-conf.yaml"
+    owner: "{{ flink_user }}"
+    group: "{{ flink_group }}"
+
+- name: Start Flink cluster
+  shell: "{{ flink_home }}/express/bin/start-cluster.sh"
+  become: yes
+  become_user: "{{ flink_user }}"

@@ -1,0 +1,5 @@
+---
+- name: Configure Flink on nodes
+  hosts: flink-nodes
+  roles:
+    - flink

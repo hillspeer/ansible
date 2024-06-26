@@ -1,0 +1,7 @@
+/.ansible_sudo_pass
+/hostlist
+/hosts
+/jenkins.yaml
+test/flink-conf.yaml.j2~
+test/hosts.ini
+test/install_flink.yml
